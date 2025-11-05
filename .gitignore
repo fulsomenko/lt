@@ -1,1 +1,9 @@
 /target
+
+# macOS
+.DS_Store
+Thumbs.db
+
+# Nix
+result
+result-*
