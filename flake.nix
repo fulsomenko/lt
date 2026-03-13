@@ -16,7 +16,19 @@
         pkgs = nixpkgs.legacyPackages.${system};
         craneLib = (crane.mkLib pkgs);
 
-        src = pkgs.lib.cleanSource ./.;
+        src = pkgs.lib.cleanSourceWith {
+          src = ./.;
+          filter = path: type:
+            (pkgs.lib.hasSuffix ''.rs'' path) ||
+            (pkgs.lib.hasSuffix ''.toml'' path) ||
+            (pkgs.lib.hasSuffix ''.lock'' path) ||
+            (pkgs.lib.hasSuffix ''.graphql'' path) ||
+            (type == "directory" && (
+              pkgs.lib.any (n: path == ./. + ("/" + n)) [
+                "src" "src/queries" "src/schemas"
+              ]
+            ));
+        };
 
         commonArgs = {
           inherit src;
